@@ -82,7 +82,7 @@ GLTriangleBatch::~GLTriangleBatch(void)
     
     // Delete buffer objects
     if(bMadeStuff) {
-        glDeleteVertexArrays(1, &vertexArrayBufferObject);
+//        glDeleteVertexArrays(1, &vertexArrayBufferObject);
         glDeleteBuffers(4, bufferObjects);
         }
     }
@@ -281,8 +281,8 @@ void GLTriangleBatch::End(void)
     
     // Create the buffer objects - might need as many as four
     glGenBuffers(4, bufferObjects);
-    glGenVertexArrays(1, &vertexArrayBufferObject);
-    glBindVertexArray(vertexArrayBufferObject);
+//    glGenVertexArrays(1, &vertexArrayBufferObject);
+//    glBindVertexArray(vertexArrayBufferObject);
 
     // Copy data to GPU memory
     // Vertex data
@@ -325,7 +325,7 @@ void GLTriangleBatch::End(void)
     delete [] pIndexes;
     pIndexes = (GLushort*)NOT_VALID_BUT_USED;
 
-    glBindVertexArray(0);
+//    glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);	// Note: This should NOT be necessary, it should be captured
 										// in the vertex array object binding state. I believe this is a
@@ -340,7 +340,7 @@ void GLTriangleBatch::Draw(void)
     if(nNumIndexes <= 0)
         return;
 
-    glBindVertexArray(vertexArrayBufferObject);
+//    glBindVertexArray(vertexArrayBufferObject);
     glDrawElements(GL_TRIANGLES, nNumIndexes, GL_UNSIGNED_SHORT, 0);
     }
 
@@ -408,8 +408,8 @@ bool GLTriangleBatch::LoadMesh(FILE *pFile, bool bNormals, bool bTexCoords)
     glGenBuffers(4, bufferObjects);
     
     // Create the master vertex array object
-    glGenVertexArrays(1, &vertexArrayBufferObject);
-    glBindVertexArray(vertexArrayBufferObject);
+//    glGenVertexArrays(1, &vertexArrayBufferObject);
+//    glBindVertexArray(vertexArrayBufferObject);
     
     // Read it all in
     fread(&nNumIndexes, sizeof(GLuint), 1, pFile);

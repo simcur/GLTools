@@ -42,13 +42,22 @@ GLBatch::GLBatch(void):uiVertexArray(0), uiNormalArray(0), uiColorArray(0), uiTe
 #ifdef QT_IS_AVAILABLE
     initializeOpenGLFunctions();
 #endif
+#if defined ( ANDROID_NDK ) || defined ( __EMSCRIPTEN__ )
+    glGenVertexArraysOES(1, &uiVertexArrayObject);
+#else
     glGenVertexArrays(1, &uiVertexArrayObject);
+#endif
 	}
 
 
 GLBatch::~GLBatch(void)
 	{
+#if defined ( ANDROID_NDK ) || defined ( __EMSCRIPTEN__ )
+    glDeleteVertexArraysOES(1, &uiVertexArrayObject);
+#else
     glDeleteVertexArrays(1, &uiVertexArrayObject);
+#endif
+
 
     // This means the buffer is being used
     if(pVerts == (M3DVector3f *)NOT_VALID_BUT_USED)
@@ -89,7 +98,11 @@ void GLBatch::Begin(GLenum primitive, GLuint nVerts)
     primitiveType = primitive;
     nNumVerts = nVerts;
     nVertsBuilding = 0;
+#if defined ( ANDROID_NDK ) || defined ( __EMSCRIPTEN__ )
+    glBindVertexArrayOES(uiVertexArrayObject);
+#else
     glBindVertexArray(uiVertexArrayObject);
+#endif
     glGenBuffers(1, &uiVertexArray);
     glBindBuffer(GL_ARRAY_BUFFER, uiVertexArray);
     glBufferData(GL_ARRAY_BUFFER, sizeof(M3DVector3f) * nVerts, NULL, GL_DYNAMIC_DRAW);
@@ -123,7 +136,12 @@ void GLBatch::Reset(GLenum primitive)
 // Block Copy in vertex data
 void GLBatch::CopyVertexData3f(M3DVector3f *vVerts) 
 	{
+#if defined ( ANDROID_NDK ) || defined ( __EMSCRIPTEN__ )
+    glBindVertexArrayOES(uiVertexArrayObject);
+#else
     glBindVertexArray(uiVertexArrayObject);
+#endif
+
     glBindBuffer(GL_ARRAY_BUFFER, uiVertexArray);
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(M3DVector3f) * nNumVerts, vVerts);
     glEnableVertexAttribArray(GLT_ATTRIBUTE_VERTEX);
@@ -135,7 +153,11 @@ void GLBatch::CopyVertexData3f(M3DVector3f *vVerts)
 // Block copy in normal data
 void GLBatch::CopyNormalDataf(M3DVector3f *vNorms) 
 	{
+#if defined ( ANDROID_NDK ) || defined ( __EMSCRIPTEN__ )
+    glBindVertexArrayOES(uiVertexArrayObject);
+#else
     glBindVertexArray(uiVertexArrayObject);
+#endif
     glBindBuffer(GL_ARRAY_BUFFER, uiNormalArray);
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(M3DVector3f) * nNumVerts, vNorms);
     glEnableVertexAttribArray(GLT_ATTRIBUTE_NORMAL);
@@ -146,7 +168,11 @@ void GLBatch::CopyNormalDataf(M3DVector3f *vNorms)
 
 void GLBatch::CopyColorData4f(M3DVector4f *vColors) 
 	{
+#if defined ( ANDROID_NDK ) || defined ( __EMSCRIPTEN__ )
+    glBindVertexArrayOES(uiVertexArrayObject);
+#else
     glBindVertexArray(uiVertexArrayObject);
+#endif
     glBindBuffer(GL_ARRAY_BUFFER, uiColorArray);
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(M3DVector4f) * nNumVerts, vColors);
     glEnableVertexAttribArray(GLT_ATTRIBUTE_COLOR);
@@ -157,7 +183,11 @@ void GLBatch::CopyColorData4f(M3DVector4f *vColors)
 
 void GLBatch::CopyTexCoordData2f(M3DVector2f *vTexCoords) 
 	{
+#if defined ( ANDROID_NDK ) || defined ( __EMSCRIPTEN__ )
+    glBindVertexArrayOES(uiVertexArrayObject);
+#else
     glBindVertexArray(uiVertexArrayObject);
+#endif
     glBindBuffer(GL_ARRAY_BUFFER, uiTextureCoordArray);
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(M3DVector2f) * nNumVerts, vTexCoords);
     glEnableVertexAttribArray(GLT_ATTRIBUTE_TEXTURE0);
@@ -169,7 +199,11 @@ void GLBatch::CopyTexCoordData2f(M3DVector2f *vTexCoords)
 // Bind everything up in a little package
 void GLBatch::End(void)
 	{
+#if defined ( ANDROID_NDK ) || defined ( __EMSCRIPTEN__ )
+    glBindVertexArrayOES(uiVertexArrayObject);
+#else
     glBindVertexArray(uiVertexArrayObject);
+#endif
     if(nVertsBuilding > 0) {
         // Check to see if items have been added one at a time
         if(pVerts != (M3DVector3f *)NOT_VALID_BUT_USED && pVerts != NULL) {
@@ -208,7 +242,12 @@ void GLBatch::End(void)
         }
         
 	bBatchDone = true;
+#if defined ( ANDROID_NDK ) || defined ( __EMSCRIPTEN__ )
+    glBindVertexArrayOES(0);
+#else
     glBindVertexArray(0);
+#endif
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);	// Note: This should NOT be necessary, it should be captured
 										// in the vertex array object binding state. I believe this is a
 										// bug in iOS's OpenGL implementation, and at it is simply redudant
@@ -221,24 +260,40 @@ void GLBatch::MapForUpdate(void)
     {
     // Vertexes always exist
     glBindBuffer(GL_ARRAY_BUFFER, uiVertexArray);
+#ifdef ANDROID_NDK
+    // TODO
+#else
     pVerts = (M3DVector3f*)glMapBufferRange(GL_ARRAY_BUFFER, 0, sizeof(M3DVector3f) * nVertsBuilding, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT);
 
+#endif
     // If we have no colors, this is nullptr, otherwise look for sential value 0xbadf00d
     if(pColors != nullptr) {
         glBindBuffer(GL_ARRAY_BUFFER, uiColorArray);
+#ifdef ANDROID_NDK
+        // TODO
+#else
         pColors = (M3DVector4f*)glMapBufferRange(GL_ARRAY_BUFFER, 0, sizeof(M3DVector4f) * nVertsBuilding, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT);
+#endif
         }
 
     // Repeat for normals
     if(pNormals != nullptr) {
         glBindBuffer(GL_ARRAY_BUFFER, uiNormalArray);
+#ifdef ANDROID_NDK
+        // TODO
+#else
         pNormals = (M3DVector3f*)glMapBufferRange(GL_ARRAY_BUFFER, 0, sizeof(M3DVector3f) * nVertsBuilding, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT);
+#endif
         }
 
     // Repeat for texture coordinates
     if(pTexCoords != nullptr) {
         glBindBuffer(GL_ARRAY_BUFFER, uiNormalArray);
+#ifdef ANDROID_NDK
+        // TODO
+#else
         pTexCoords = (M3DVector2f*)glMapBufferRange(GL_ARRAY_BUFFER, 0, sizeof(M3DVector2f) * nVertsBuilding, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT);
+#endif
         }
 
 
@@ -247,25 +302,41 @@ void GLBatch::MapForUpdate(void)
 void GLBatch::UnmapForUpdate(void)
     {
     glBindBuffer(GL_ARRAY_BUFFER, uiVertexArray);
+
+#ifdef ANDROID_NDK
+    // TODO
+#else
     glUnmapBuffer(GL_ARRAY_BUFFER);
+#endif
     pVerts = (M3DVector3f*)NOT_VALID_BUT_USED;
 
     if(pColors != nullptr) {
         glBindBuffer(GL_ARRAY_BUFFER, uiColorArray);
+#ifdef ANDROID_NDK
+        // TODO
+#else
         glUnmapBuffer(GL_ARRAY_BUFFER);
+#endif
         pColors = (M3DVector4f*)NOT_VALID_BUT_USED;
         }
 
 
     if(pNormals != nullptr) {
         glBindBuffer(GL_ARRAY_BUFFER, uiNormalArray);
+#ifdef ANDROID_NDK
+        // TODO
+#else
         glUnmapBuffer(GL_ARRAY_BUFFER);
+#endif
         pNormals = (M3DVector3f*)NOT_VALID_BUT_USED;
         }
 
     if(pTexCoords != nullptr) {
         glBindBuffer(GL_ARRAY_BUFFER, uiTextureCoordArray);
+#ifdef ANDROID_NDK
+#else
         glUnmapBuffer(GL_ARRAY_BUFFER);
+#endif
         pTexCoords = (M3DVector2f*)NOT_VALID_BUT_USED;
         }
     }
@@ -390,8 +461,12 @@ void GLBatch::Draw(void)
 	{
 	if(!bBatchDone)
 		return;
-    
+#if defined ( ANDROID_NDK ) || defined ( __EMSCRIPTEN__ )
+    glBindVertexArrayOES(uiVertexArrayObject);
+#else
     glBindVertexArray(uiVertexArrayObject);
+#endif
+
     if(nVertsBuilding != 0)
         glDrawArrays(primitiveType, 0, nVertsBuilding);
     }
