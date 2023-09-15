@@ -41,6 +41,18 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF S
 #endif
 #endif
 
+#if defined ( ANDROID_NDK )
+#include <GLES2/gl2.h>
+#elif defined ( __EMSCRIPTEN__ )
+#define GL3_PROTOTYPES
+		#include <GLES3/gl3.h>
+#endif
+#if defined ( ANDROID_NDK ) || defined ( __EMSCRIPTEN__ )
+#define GL_GLEXT_PROTOTYPES
+        #include <GLES2/gl2ext.h>
+        #include "glu.h"
+#endif
+
 #include <stdarg.h>
 #include <string.h>
 
