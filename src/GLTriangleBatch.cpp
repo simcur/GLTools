@@ -82,7 +82,12 @@ GLTriangleBatch::~GLTriangleBatch(void)
     
     // Delete buffer objects
     if(bMadeStuff) {
-//        glDeleteVertexArrays(1, &vertexArrayBufferObject);
+#if defined ( ANDROID_NDK ) || defined ( __EMSCRIPTEN__ )
+		glDeleteVertexArraysOES(1, &vertexArrayBufferObject);
+#else
+		glDeleteVertexArrays(1, &vertexArrayBufferObject);
+#endif
+
         glDeleteBuffers(4, bufferObjects);
         }
     }
@@ -281,8 +286,13 @@ void GLTriangleBatch::End(void)
     
     // Create the buffer objects - might need as many as four
     glGenBuffers(4, bufferObjects);
-//    glGenVertexArrays(1, &vertexArrayBufferObject);
-//    glBindVertexArray(vertexArrayBufferObject);
+#if defined ( ANDROID_NDK ) || defined ( __EMSCRIPTEN__ )
+	glGenVertexArraysOES(1, &vertexArrayBufferObject);
+	glBindVertexArrayOES(vertexArrayBufferObject);
+#else
+    glGenVertexArrays(1, &vertexArrayBufferObject);
+    glBindVertexArray(vertexArrayBufferObject);
+#endif
 
     // Copy data to GPU memory
     // Vertex data
@@ -325,7 +335,12 @@ void GLTriangleBatch::End(void)
     delete [] pIndexes;
     pIndexes = (GLushort*)NOT_VALID_BUT_USED;
 
-//    glBindVertexArray(0);
+#if defined ( ANDROID_NDK ) || defined ( __EMSCRIPTEN__ )
+	glBindVertexArrayOES(0);
+#else
+	glBindVertexArray(0);
+#endif
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);	// Note: This should NOT be necessary, it should be captured
 										// in the vertex array object binding state. I believe this is a
@@ -339,8 +354,11 @@ void GLTriangleBatch::Draw(void)
     {
     if(nNumIndexes <= 0)
         return;
-
-//    glBindVertexArray(vertexArrayBufferObject);
+#if defined ( ANDROID_NDK ) || defined ( __EMSCRIPTEN__ )
+	glBindVertexArrayOES(vertexArrayBufferObject);
+#else
+	glBindVertexArray(vertexArrayBufferObject);
+#endif
     glDrawElements(GL_TRIANGLES, nNumIndexes, GL_UNSIGNED_SHORT, 0);
     }
 
@@ -408,8 +426,14 @@ bool GLTriangleBatch::LoadMesh(FILE *pFile, bool bNormals, bool bTexCoords)
     glGenBuffers(4, bufferObjects);
     
     // Create the master vertex array object
-//    glGenVertexArrays(1, &vertexArrayBufferObject);
-//    glBindVertexArray(vertexArrayBufferObject);
+#if defined ( ANDROID_NDK ) || defined ( __EMSCRIPTEN__ )
+	glGenVertexArraysOES(1, &vertexArrayBufferObject);
+	glBindVertexArrayOES(vertexArrayBufferObject);
+#else
+	glGenVertexArrays(1, &vertexArrayBufferObject);
+	glBindVertexArray(vertexArrayBufferObject);
+#endif
+
     
     // Read it all in
     fread(&nNumIndexes, sizeof(GLuint), 1, pFile);
