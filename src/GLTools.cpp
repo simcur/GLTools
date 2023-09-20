@@ -30,7 +30,7 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF S
 */
 
 #include "GLTools.h"
-
+#include "CSkyDataFile.h"
 
 GLTools* GLTools::pMe = NULL;
 
@@ -844,7 +844,7 @@ GLbyte *gltReadTGABits(const char *szFileName, GLint *iWidth, GLint *iHeight, GL
     *iComponents = GL_RGB;
     
     // Attempt to open the fil
-    pFile = fopen(szFileName, "rb");
+    pFile = fileopen(szFileName, "rb", nullptr);
     if(pFile == NULL)
         return NULL;
 	
@@ -1053,7 +1053,8 @@ bool GLTools::gltLoadShaderFile(const char *szFile, GLuint shader)
     FILE *fp;
 	
     // Open the shader file
-    fp = fopen(szFile, "r");
+
+    fp = fileopen(szFile, "r", nullptr);
     shaderText[0] = 0x0;
     if(fp != NULL)
 		{
