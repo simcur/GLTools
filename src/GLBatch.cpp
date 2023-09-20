@@ -261,7 +261,7 @@ void GLBatch::MapForUpdate(void)
     // Vertexes always exist
     glBindBuffer(GL_ARRAY_BUFFER, uiVertexArray);
 #ifdef ANDROID_NDK
-    // TODO
+    pVerts = (M3DVector3f*)glMapBufferOES(GL_ARRAY_BUFFER, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT);
 #else
     pVerts = (M3DVector3f*)glMapBufferRange(GL_ARRAY_BUFFER, 0, sizeof(M3DVector3f) * nVertsBuilding, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT);
 
@@ -270,7 +270,7 @@ void GLBatch::MapForUpdate(void)
     if(pColors != nullptr) {
         glBindBuffer(GL_ARRAY_BUFFER, uiColorArray);
 #ifdef ANDROID_NDK
-        // TODO
+        pColors = (M3DVector4f*)glMapBufferOES(GL_ARRAY_BUFFER, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT);
 #else
         pColors = (M3DVector4f*)glMapBufferRange(GL_ARRAY_BUFFER, 0, sizeof(M3DVector4f) * nVertsBuilding, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT);
 #endif
@@ -280,7 +280,7 @@ void GLBatch::MapForUpdate(void)
     if(pNormals != nullptr) {
         glBindBuffer(GL_ARRAY_BUFFER, uiNormalArray);
 #ifdef ANDROID_NDK
-        // TODO
+        pNormals = (M3DVector3f*)glMapBufferOES ( GL_ARRAY_BUFFER, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT);
 #else
         pNormals = (M3DVector3f*)glMapBufferRange(GL_ARRAY_BUFFER, 0, sizeof(M3DVector3f) * nVertsBuilding, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT);
 #endif
@@ -290,7 +290,7 @@ void GLBatch::MapForUpdate(void)
     if(pTexCoords != nullptr) {
         glBindBuffer(GL_ARRAY_BUFFER, uiNormalArray);
 #ifdef ANDROID_NDK
-        // TODO
+        pTexCoords = (M3DVector2f*)glMapBufferOES(GL_ARRAY_BUFFER, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT);
 #else
         pTexCoords = (M3DVector2f*)glMapBufferRange(GL_ARRAY_BUFFER, 0, sizeof(M3DVector2f) * nVertsBuilding, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT);
 #endif
@@ -304,7 +304,7 @@ void GLBatch::UnmapForUpdate(void)
     glBindBuffer(GL_ARRAY_BUFFER, uiVertexArray);
 
 #ifdef ANDROID_NDK
-    // TODO
+    glUnmapBufferOES(GL_ARRAY_BUFFER);
 #else
     glUnmapBuffer(GL_ARRAY_BUFFER);
 #endif
@@ -313,7 +313,7 @@ void GLBatch::UnmapForUpdate(void)
     if(pColors != nullptr) {
         glBindBuffer(GL_ARRAY_BUFFER, uiColorArray);
 #ifdef ANDROID_NDK
-        // TODO
+        glUnmapBufferOES(GL_ARRAY_BUFFER);
 #else
         glUnmapBuffer(GL_ARRAY_BUFFER);
 #endif
@@ -324,7 +324,7 @@ void GLBatch::UnmapForUpdate(void)
     if(pNormals != nullptr) {
         glBindBuffer(GL_ARRAY_BUFFER, uiNormalArray);
 #ifdef ANDROID_NDK
-        // TODO
+        glUnmapBufferOES(GL_ARRAY_BUFFER);
 #else
         glUnmapBuffer(GL_ARRAY_BUFFER);
 #endif
@@ -334,6 +334,7 @@ void GLBatch::UnmapForUpdate(void)
     if(pTexCoords != nullptr) {
         glBindBuffer(GL_ARRAY_BUFFER, uiTextureCoordArray);
 #ifdef ANDROID_NDK
+        glUnmapBufferOES(GL_ARRAY_BUFFER);
 #else
         glUnmapBuffer(GL_ARRAY_BUFFER);
 #endif
