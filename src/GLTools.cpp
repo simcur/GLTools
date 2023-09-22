@@ -1050,16 +1050,18 @@ bool GLTools::gltLoadShaderFile(const char *szFile, GLuint shader)
     char szShaderLine[128];
     
     size_t shaderLength = 0;
+	uint fileLength = 0;
+	uint offset = 0;
     FILE *fp;
 	
     // Open the shader file
 
-    fp = fileopen(szFile, "r", nullptr);
+    fp = fileopen(szFile, "r", &offset, &fileLength );
     shaderText[0] = 0x0;
     if(fp != NULL)
 		{
         // Get a line at a time
-        while (fgets(szShaderLine, 128, fp) != NULL) {        
+        while (fgets(szShaderLine, 128, fp) != nullptr  && ( ftell ( fp ) - offset ) <= fileLength) {
             shaderLength+= strlen(szShaderLine);
 
             if(shaderLength < MAX_SHADER_LENGTH)
