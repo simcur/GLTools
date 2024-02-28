@@ -31,6 +31,7 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF S
 
 #include "GLTools.h"
 #include "CSkyDataFile.h"
+#include "target.h"
 
 GLTools* GLTools::pMe = NULL;
 
@@ -1112,7 +1113,7 @@ GLuint GLTools::gltLoadShaderPairWithAttributes(const char *szVertexProg, const 
 		{
         glDeleteShader(hVertexShader);
         glDeleteShader(hFragmentShader);
-		fprintf(stderr, "The shader at %s could ot be found.\n", szVertexProg);
+		LOG_ERROR("gltLoadShaderPairWithAttributes: The shader at %s could ot be found.\n", szVertexProg);
         return (GLuint)NULL;
 		}
 	
@@ -1121,7 +1122,7 @@ GLuint GLTools::gltLoadShaderPairWithAttributes(const char *szVertexProg, const 
 		{
         glDeleteShader(hVertexShader);
         glDeleteShader(hFragmentShader);
-		fprintf(stderr,"The shader at %s  could not be found.\n", szFragmentProg);
+		LOG_ERROR("gltLoadShaderPairWithAttributes: The shader at %s  could not be found.\n", szFragmentProg);
         return (GLuint)NULL;
 		}
     
@@ -1135,7 +1136,7 @@ GLuint GLTools::gltLoadShaderPairWithAttributes(const char *szVertexProg, const 
 		{
 		char infoLog[1024];
 		glGetShaderInfoLog(hVertexShader, 1024, NULL, infoLog);
-		fprintf(stderr, "The shader at %s failed to compile with the following error:\n%s\n", szVertexProg, infoLog);
+		LOG_ERROR("gltLoadShaderPairWithAttributes: The shader at %s failed to compile with the following error:\n%s\n", szVertexProg, infoLog);
         glDeleteShader(hVertexShader);
         glDeleteShader(hFragmentShader);
         return (GLuint)NULL;
@@ -1147,7 +1148,7 @@ GLuint GLTools::gltLoadShaderPairWithAttributes(const char *szVertexProg, const 
 		{
 		char infoLog[1024];
 		glGetShaderInfoLog(hFragmentShader, 1024, NULL, infoLog);
-		fprintf(stderr, "The shader at %s failed to compile with the following error:\n%s\n", szFragmentProg, infoLog);
+		LOG_ERROR("gltLoadShaderPairWithAttributes: The shader at %s failed to compile with the following error:\n%s\n", szFragmentProg, infoLog);
         glDeleteShader(hVertexShader);
         glDeleteShader(hFragmentShader);
         return (GLuint)NULL;
@@ -1188,8 +1189,8 @@ GLuint GLTools::gltLoadShaderPairWithAttributes(const char *szVertexProg, const 
 		{
 		char infoLog[1024];
 		glGetProgramInfoLog(hReturn, 1024, NULL, infoLog);
-		fprintf(stderr,"The programs %s and %s failed to link with the following errors:\n%s\n",
-			szVertexProg, szFragmentProg, infoLog);
+		LOG_ERROR("gltLoadShaderPairWithAttributes: The programs %s and %s failed to link with the following errors:\n%s\n",
+				  szVertexProg, szFragmentProg, infoLog);
 		glDeleteProgram(hReturn);
 		return (GLuint)NULL;
 		}
@@ -1239,7 +1240,6 @@ GLuint GLTools::gltLoadShaderPair(const char *szVertexProg, const char *szFragme
 		{
 		char infoLog[1024];
 		glGetShaderInfoLog(hVertexShader, 1024, NULL, infoLog);
-		fprintf(stderr, "The shader at %s failed to compile with the following error:\n%s\n", szVertexProg, infoLog);
         glDeleteShader(hVertexShader);
         glDeleteShader(hFragmentShader);
         return (GLuint)NULL;
@@ -1439,7 +1439,7 @@ bool GLTools::gltCheckErrors(GLuint progName)
 		
 	if (error != GL_NO_ERROR)
 	{
-	    fprintf(stderr, "A GL Error has occured\n");
+		LOG_ERROR("A GL Error has occurred\n");
         bFoundError = true;
 	}
 #ifndef OPENGL_ES
