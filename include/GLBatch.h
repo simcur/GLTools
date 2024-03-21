@@ -47,6 +47,10 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF S
 #include "M3DFrustum.h"
 #include "GLShaderManager.h"
 
+#if defined ( __EMSCRIPTEN__ ) 
+typedef unsigned int            uint;
+#endif
+
 class GLBatch: public GLBatchBase
     {
     public:
