@@ -29,6 +29,7 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF S
 #define __GL_BATCH__
 
 #include <assert.h>
+#include <sys/types.h>
 
 #ifdef __APPLE__
 #include <TargetConditionals.h>
