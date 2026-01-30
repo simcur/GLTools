@@ -49,12 +49,15 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF S
 #elif defined ( ONLINUX )
 	#include <GL/gl.h>
 #endif
-#if defined ( ANDROID_NDK ) || defined ( __EMSCRIPTEN__ ) || defined ( ONLINUX )
-#define GL_GLEXT_PROTOTYPES
-        #include <GLES2/gl2ext.h>
-        #include "glu.h"
-#endif
-
+#if defined ( ANDROID_NDK ) || defined ( __EMSCRIPTEN__ )                                                                                                                                                                                              
+#define GL_GLEXT_PROTOTYPES                                                                                                                                                                                                                            
+		#include <GLES2/gl2ext.h>                                                                                                                                                                                                                      
+		#include "glu.h"                                                                                                                                                                                                                               
+#elif defined ( ONLINUX )                                                                                                                                                                                                                              
+#define GL_GLEXT_PROTOTYPES                                                                                                                                                                                                                            
+		#include <GL/glext.h>                                                                                                                                                                                                                          
+		#include <GL/glu.h>                                                                                                                                                                                                                            
+#endif      
 #include <stdarg.h>
 #include <string.h>
 
